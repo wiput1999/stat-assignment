@@ -1,6 +1,6 @@
 # Assignment of Probability and Statistics (Class of 2019)
 
-## Data Analytic and Visualization from FiveThirtyEight
+Data Analytic and Visualization with FiveThirtyEight dataset
 
 # Team Member
 
