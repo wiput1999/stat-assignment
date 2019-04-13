@@ -1,0 +1,166 @@
+---
+title: "drinks538example"
+date: "3/21/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# ตัวอย่างรายงาน
+
+***
+### ชื่อ:    อลิส แดนอัศจรรย์ 
+
+### รหัสนักศึกษา:   59xxxxxx
+
+### เวลาเรียน: อังคาร 9.00-12.00 
+***
+
+## โจทย์ปัญหา  :
+### 1. ไทยเป็นประเทศขี้เมาอันดับต้นๆของโลกจริงหรือไม่? 
+### 2. ประเทศใดมีการบริโภคเครื่องดื่มแอลกอฮอล์สูงที่สุดในโลก?
+
+### ชุดข้อมูลที่ใช้จาก  fivethirtyeight : drinks
+
+*** 
+
+### 1 Load libraries
+
+```{r}
+library(tidyverse)
+library(fivethirtyeight)
+library(stringr)
+library(ggthemes)
+```
+
+### 2 Look at the data (drinks) 
+
+```{r}
+# print out the dataframe to see what it looks like
+drinks
+comic_characters
+drug_use
+
+# make it tidy (this code is taken from the example given in ?drinks)
+drinks_tidy <- drinks %>%
+  gather(type, servings, -c(country, total_litres_of_pure_alcohol)) %>%
+  mutate(
+    type = str_sub(type, start=1, end=-10)
+  ) %>%
+  arrange(country, type)
+
+
+drinks_tidy
+```
+
+
+### 3 Looking for answers
+
+
+##### 3.1 Ranking of Thailand
+
+* Rank the countries in the order of alocohol consumption (servings) 
+
+* Then, find out where Thailand is in the list
+
+```{r}
+th_rank <- drinks_tidy %>%
+            # grouped by  country 
+            group_by(country) %>% 
+            # sum of alcohol servings in each country
+            summarise(total_servings = sum(servings)) %>%
+            # sort the list in order of total_servings
+            arrange(desc(total_servings)) %>%
+            # create rank
+            mutate(ranking = 1:n()) %>%
+            # Rank of Thailand
+            filter(country == "Thailand")
+
+th_rank 
+```
+
+Thailand is in the 61st place (out of 193 countries) with the total consumption of 358 servings. 
+
+##### 3.2 Find top 25 countries with the highest alcohol consumption
+
+3.2.1 First, find out the top 25 countries
+
+```{r}
+country25 <- drinks_tidy %>%
+              # grouped by country
+              group_by(country) %>% 
+              # sum of servings in each country
+              summarise(total_servings = sum(servings)) %>%
+              # sort rows by total servings consumed
+              arrange(desc(total_servings)) %>%
+              # select only the top 25 countries (first 25 items on the list)
+              head(25) 
+
+country25
+```
+
+3.2.2 Use the top 25 country list as keys to select data from the original dataframe (drinks_tidy)
+
+```{r}
+top25_and_th <- drinks_tidy %>%
+                # top 25 countries and Thailand
+                filter(country %in% country25$country | country == "Thailand") 
+
+top25_and_th
+```
+
+
+### 4 Visualize data
+
+##### 4.1  Use bar chart for visualization 
+
+* Plot top 25 countries and Thailand on a bar chart.
+
+```{r}
+p1 <- ggplot(data=top25_and_th, aes(x=reorder(country, servings),y=servings)) +
+        # map "type" of beverage to aes "fill"" of the bar 
+        geom_col(aes(fill=type)) + 
+        # flip coordinate 
+        coord_flip() +
+        # add labels
+        labs(x="", y="Consumption (servings)", title="Top 25 alcohol consuming countries \nand Thailand")
+
+p1 
+```
+
+##### 4.2 Make it a little fancier with the 538 theme
+
+* Use the fivethirtyeight theme for the plot
+
+```{r}
+p2 <- p1 +  theme_fivethirtyeight() + 
+      # format the fill of bars
+      scale_fill_fivethirtyeight() +
+      # add labels
+      theme(axis.title = element_text()) + xlab("") + ylab("Consumption (servings)") +
+      # add title
+      labs(title="Top 25 alcohol consuming countries \nand Thailand") 
+
+p2
+```
+
+***
+
+## สรุปผล : 
+
+#### 1. ประเทศไทยจัดอยู่ในอันดับ <span style="color:red">61</span> จาก 193 ประเทศ ที่มีการบริโภคแอลกอฮอล์  (ปริมาณบริโภค 358 servings) ดังนั้นยังไม่จัดว่ามีการบริโภคแอลกอฮอล์สูงเป็นลำดับต้นๆของโลก  
+```{r}
+th_rank
+```
+
+#### 2. ประเทศ <span style="color:red">Andorra</span> มีการบริโภคเครื่องดื่มแอลกอฮอล์สูงที่สุดในโลก (695 servings)  รองลงมาคือ  Grenada และ Czech Republic (665 servings)  ส่วนประเทศอื่นๆ เป็นไปตามที่แสดงในแผนภูมิด้านล่าง 
+
+```{r, out.width = "100%"}
+p2
+```
+
+
+
+
