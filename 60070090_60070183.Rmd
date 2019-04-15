@@ -55,16 +55,30 @@ comic_characters
 #### 3.1.) ดูว่าตัวละครจากค่ายหนังสือการ์ตูนทั้ง Marvel และ DC นั้นมีอัตราการเสียชีวิตเท่าไร
 
 ```{r}
-character_live <- comic_characters %>%
-  count(publisher, alive) %>%
-  filter(!is.na(alive))
+character_status <- comic_characters %>%
+                    count(publisher, alive) %>%
+                    filter(!is.na(alive))
 
-character_live 
+character_status 
 ```
 
 #### 3.2.)
 
-    `to_be_done`
+```{r}
+character_status <- comic_characters %>%
+                    count(publisher, alive, sex) %>%
+                    filter(!is.na(alive))
+
+a <- character_status %>%
+          filter((sex == 'Male Characters') | (sex == 'Female Characters'))
+
+b <- character_status %>%
+          filter((sex != 'Male Characters') & (sex != 'Female Characters'))
+
+by_sex = rbind(a, b)
+
+by_sex
+```
 
 ### 4.) นำข้อมูลมานำเสนอ (Data Visualization)
 
