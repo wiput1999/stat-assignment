@@ -52,14 +52,21 @@ comic_characters
 
 ### 3.) หาคำตอบ
 
-#### 3.1.) ดูว่าตัวละครจากค่ายหนังสือการ์ตูนทั้ง Marvel และ DC นั้นมีอัตราการเสียชีวิตเท่าไร
+### 3 Looking for answers
+
+
+##### 3.1 Ranking of Thailand
+
+* Rank the countries in the order of alocohol consumption (servings)
+
+* Then, find out where Thailand is in the list
 
 ```{r}
 character_status <- comic_characters %>%
                     count(publisher, alive) %>%
                     filter(!is.na(alive))
 
-character_status 
+character_status
 ```
 
 #### 3.2.)
@@ -86,14 +93,14 @@ by_sex
 
 ```{r}
 p1 <- ggplot(data=character_live, aes(x = publisher, alive, y = n)) +
-        # map "alive" of beverage to aes "fill"" of the bar 
-        geom_col(aes(fill = alive)) + 
-        # flip coordinate 
+        # map "alive" of beverage to aes "fill"" of the bar
+        geom_col(aes(fill = alive)) +
+        # flip coordinate
         coord_flip() +
         # add labels
-        labs(x="", y="Characters", title="Comic Characters still alive from each publisher")
+        labs(x="", y="Characters", title="Comic Characters dead from each publisher")
 
-p1 
+p1
 ```
 
 #### 4.2.)
