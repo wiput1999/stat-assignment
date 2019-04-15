@@ -8,37 +8,34 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## สมาชิกภายในกลุ่ม
+## สมาชิกกลุ่ม
 
-***
 ### สมาชิกคนที่ 1
 
-ชื่อ:    วิพุธ ภู่ทอง
+ชื่อ: นายวิพุธ ภู่ทอง
 
-รหัสนักศึกษา:   60070090
+รหัสนักศึกษา: 60070090
 
-เวลาเรียน: อังคาร 13:30 - 16:30
+เวลาเรียน: อังคาร 13:30 - 16:30 น.
 
 ### สมาชิกคนที่ 2
 
-ชื่อ:    ธีรภัทร์ ไกรศรีสิริกุล
+ชื่อ: นายธีรภัทร ไกรศรีสิริกุล
 
-รหัสนักศึกษา:   60070183
+รหัสนักศึกษา: 60070183
 
-เวลาเรียน: อังคาร 13:30 - 16:30
-
+เวลาเรียน: อังคาร 13:30 - 16:30 น.
 
 ## โจทย์ปัญหา
 
-***
 1. Marvel เป็นทีมที่เขียนตัวละครออกมาแล้วตายมากกว่า DC หรือไม่?
 2. ประเทศใดมีการบริโภคเครื่องดื่มแอลกอฮอล์สูงที่สุดในโลก?
 
 ชุดข้อมูลที่ใช้จาก  fivethirtyeight : comic_characters
 
-*** 
+## ขั้นตอนการดำเนินการ
 
-### 1 Load libraries
+### 1.) โหลด Library
 
 ```{r}
 library(tidyverse)
@@ -47,75 +44,33 @@ library(stringr)
 library(ggthemes)
 ```
 
-### 2 Look at the data (comic_characters) 
+### 2.) ทดลองดูข้อมูล
 
 ```{r}
-# print out the dataframe to see what it looks like
 comic_characters
 ```
 
+### 3.) หาคำตอบ
 
-### 3 Looking for answers
-
-
-##### 3.1 Ranking of Thailand
-
-* Rank the countries in the order of alocohol consumption (servings) 
-
-* Then, find out where Thailand is in the list
+#### 3.1.) ดูว่าตัวละครจากค่ายหนังสือการ์ตูนทั้ง Marvel และ DC นั้นมีอัตราการเสียชีวิตเท่าไร
 
 ```{r}
-
 character_live <- comic_characters %>%
   count(publisher, alive) %>%
   filter(!is.na(alive))
 
-
-th_rank <- drinks_tidy %>%
-            # grouped by  country 
-            group_by(country) %>% 
-            # sum of alcohol servings in each country
-            summarise(total_servings = sum(servings)) %>%
-            # sort the list in order of total_servings
-            arrange(desc(total_servings)) %>%
-            # create rank
-            mutate(ranking = 1:n()) %>%
-            # Rank of Thailand
-            filter(country == "Thailand")
-
 character_live 
 ```
 
-Thailand is in the 61st place (out of 193 countries) with the total consumption of 358 servings. 
+#### 3.2.)
 
-##### 3.2 Find top 25 countries with the highest alcohol consumption
+    `to_be_done`
 
-3.2.1 First, find out the top 25 countries
+### 4.) นำข้อมูลมานำเสนอ (Data Visualization)
 
-```{r}
-character_alive <- character_live %>%
-  filter(alive == 'Living Characters')
-```
-
-3.2.2 Use the top 25 country list as keys to select data from the original dataframe (drinks_tidy)
+#### 4.1.) ใช้ Bar Chart
 
 ```{r}
-top25_and_th <- drinks_tidy %>%
-                # top 25 countries and Thailand
-                filter(country %in% country25$country | country == "Thailand") 
-
-top25_and_th
-```
-
-
-### 4 Visualize data
-
-##### 4.1  Use bar chart for visualization 
-
-* Plot top 25 countries and Thailand on a bar chart.
-
-```{r}
-
 p1 <- ggplot(data=character_live, aes(x = publisher, alive, y = n)) +
         # map "alive" of beverage to aes "fill"" of the bar 
         geom_col(aes(fill = alive)) + 
@@ -127,37 +82,10 @@ p1 <- ggplot(data=character_live, aes(x = publisher, alive, y = n)) +
 p1 
 ```
 
-##### 4.2 Make it a little fancier with the 538 theme
+#### 4.2.)
 
-* Use the fivethirtyeight theme for the plot
+    `to_be_done`
 
-```{r}
-p2 <- p1 +  theme_fivethirtyeight() + 
-      # format the fill of bars
-      scale_fill_fivethirtyeight() +
-      # add labels
-      theme(axis.title = element_text()) + xlab("") + ylab("Consumption (servings)") +
-      # add title
-      labs(title="Top 25 alcohol consuming countries \nand Thailand") 
+## สรุปผล
 
-p2
-```
-
-***
-
-## สรุปผล : 
-
-#### 1. ประเทศไทยจัดอยู่ในอันดับ <span style="color:red">61</span> จาก 193 ประเทศ ที่มีการบริโภคแอลกอฮอล์  (ปริมาณบริโภค 358 servings) ดังนั้นยังไม่จัดว่ามีการบริโภคแอลกอฮอล์สูงเป็นลำดับต้นๆของโลก  
-```{r}
-th_rank
-```
-
-#### 2. ประเทศ <span style="color:red">Andorra</span> มีการบริโภคเครื่องดื่มแอลกอฮอล์สูงที่สุดในโลก (695 servings)  รองลงมาคือ  Grenada และ Czech Republic (665 servings)  ส่วนประเทศอื่นๆ เป็นไปตามที่แสดงในแผนภูมิด้านล่าง 
-
-```{r, out.width = "100%"}
-p2
-```
-
-
-
-
+    `to_be_done`
