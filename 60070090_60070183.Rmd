@@ -52,14 +52,8 @@ comic_characters
 
 ### 3.) หาคำตอบ
 
-### 3 Looking for answers
+#### 3.1.) ดูว่าตัวละครจากค่ายหนังสือการ์ตูนทั้ง Marvel และ DC นั้นมีอัตราการเสียชีวิตเท่าไร
 
-
-##### 3.1 Ranking of Thailand
-
-* Rank the countries in the order of alocohol consumption (servings)
-
-* Then, find out where Thailand is in the list
 
 ```{r}
 character_status <- comic_characters %>%
