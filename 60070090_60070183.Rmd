@@ -28,8 +28,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## โจทย์ปัญหา
 
-1. Marvel เป็นทีมที่เขียนตัวละครออกมาแล้วตายมากกว่า DC หรือไม่?
-2. ประเทศใดมีการบริโภคเครื่องดื่มแอลกอฮอล์สูงที่สุดในโลก?
+1. Marvel หรือ DC เขียนตัวละครมาแล้วตายไปมากกว่ากัน?
+2. ตัวละครชายและ หญิงของค่าย Marvel หรือ DC ค่ายใดมีตัวละครที่ดำเนินเนื้อเรื่องมาจนถึงปัจจุบันมากกว่ากันในแต่ละเพศ?
 
 ชุดข้อมูลที่ใช้จาก  fivethirtyeight : comic_characters
 
@@ -63,22 +63,20 @@ character_status <- comic_characters %>%
 character_status
 ```
 
-#### 3.2.)
+#### 3.2.) ดูว่าตัวละครจากค่ายหนังสือการ์ตูนทั้ง Marvel และ DC มีอัตราการมีชีวิตอยู่จนถึงเนื้อเรื่องปัจจุบันเท่าใด?
 
 ```{r}
 character_status <- comic_characters %>%
                     count(publisher, alive, sex) %>%
                     filter(!is.na(alive))
 
-a <- character_status %>%
-          filter((sex == 'Male Characters') | (sex == 'Female Characters'))
 
-b <- character_status %>%
-          filter((sex != 'Male Characters') & (sex != 'Female Characters'))
-
-by_sex = rbind(a, b)
+by_sex = character_status %>%
+  filter((sex == 'Male Characters') | (sex == 'Female Characters')) %>%
+  filter(alive == "Living Characters")
 
 by_sex
+
 ```
 
 ### 4.) นำข้อมูลมานำเสนอ (Data Visualization)
@@ -97,10 +95,19 @@ p1 <- ggplot(data=character_live, aes(x = publisher, alive, y = n)) +
 p1
 ```
 
-#### 4.2.)
+#### 4.2.) ใช้ Bar Chart
 
-    `to_be_done`
+```{r}
+p2 <- ggplot(data=by_sex, aes(x = sex, y = n)) +
+        # map "alive" of beverage to aes "fill"" of the bar
+        geom_col(aes(fill = publisher)) +
+        # flip coordinate
+        coord_flip() +
+        # add labels
+        labs(x="", y="Characters", title="Comic Characters alive from each publisher by sex")
 
+p2
+```
 ## สรุปผล
 
     `to_be_done`
