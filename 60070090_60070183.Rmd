@@ -66,14 +66,8 @@ character_status
 #### 3.2.) ดูว่าตัวละครจากค่ายหนังสือการ์ตูนทั้ง Marvel และ DC มีอัตราการมีชีวิตอยู่จนถึงเนื้อเรื่องปัจจุบันเท่าใด?
 
 ```{r}
-character_status <- comic_characters %>%
-                    count(publisher, alive, sex) %>%
-                    filter(!is.na(alive))
-
-
 by_sex = character_status %>%
-  filter((sex == 'Male Characters') | (sex == 'Female Characters')) %>%
-  filter(alive == "Living Characters")
+  filter((sex == 'Male Characters') | (sex == 'Female Characters'))
 
 by_sex
 
@@ -86,7 +80,7 @@ by_sex
 ```{r}
 p1 <- ggplot(data=character_live, aes(x = publisher, alive, y = n)) +
         # map "alive" of beverage to aes "fill"" of the bar
-        geom_col(aes(fill = alive)) +
+        geom_col(aes(fill = alive), position = position_fill()) +
         # flip coordinate
         coord_flip() +
         # add labels
@@ -100,12 +94,12 @@ p1
 ```{r}
 p2 <- ggplot(data=by_sex, aes(x = sex, y = n)) +
         # map "alive" of beverage to aes "fill"" of the bar
-        geom_col(aes(fill = publisher)) +
+        geom_col(aes(fill = alive), position = position_fill()) +
         # flip coordinate
         coord_flip() +
         # add labels
         labs(x="", y="Characters", title="Comic Characters alive from each publisher by sex")
-
+ 
 p2
 ```
 ## สรุปผล
