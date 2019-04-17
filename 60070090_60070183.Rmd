@@ -28,8 +28,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## โจทย์ปัญหา
 
-1. Marvel หรือ DC เขียนตัวละครมาแล้วตายไปมากกว่ากัน?
-2. ตัวละครชายและ หญิงของค่าย Marvel หรือ DC ค่ายใดมีตัวละครที่ดำเนินเนื้อเรื่องมาจนถึงปัจจุบันมากกว่ากันในแต่ละเพศ?
+1. Marvel หรือ DC เขียนตัวละครมาแล้วเสียชีวิตไปมากกว่ากัน?
+2. เพศและฝั่งของตัวละครมีผลหรือแนวโน้มที่จะถูกเขียนให้เสียชีวิตมากน้อยเท่าไร?
 
 ชุดข้อมูลที่ใช้จาก  fivethirtyeight : comic_characters
 
@@ -54,23 +54,32 @@ comic_characters
 
 #### 3.1.) ดูว่าตัวละครจากค่ายหนังสือการ์ตูนทั้ง Marvel และ DC นั้นมีอัตราการเสียชีวิตเท่าไร
 
-
 ```{r}
-character_status <- comic_characters %>%
-                    count(publisher, alive) %>%
-                    filter(!is.na(alive))
+by_publisher <- comic_characters %>%
+                count(publisher, alive) %>%
+                filter(!is.na(alive))
 
-character_status
+by_publisher
 ```
 
-#### 3.2.) ดูว่าตัวละครจากค่ายหนังสือการ์ตูนทั้ง Marvel และ DC มีอัตราการมีชีวิตอยู่จนถึงเนื้อเรื่องปัจจุบันเท่าใด?
+#### 3.2.) ดูปัจจัยอื่นอย่างเพศและฝั่งของตัวละคร ว่ามีอัตราการเสียชีวิตเท่าไร
 
 ```{r}
-by_sex = character_status %>%
-  filter((sex == 'Male Characters') | (sex == 'Female Characters'))
+by_sex <- comic_characters %>%
+          count(sex, alive) %>%
+          filter(!is.na(alive)) %>%
+          filter((sex == 'Male Characters') | (sex == 'Female Characters'))
 
 by_sex
+```
 
+```{r}
+by_align <- comic_characters %>%
+            count(align, alive) %>%
+            filter(!is.na(alive)) %>%
+            filter(align == 'Bad Characters' | align == 'Good Characters' | is.na(align))
+
+by_align
 ```
 
 ### 4.) นำข้อมูลมานำเสนอ (Data Visualization)
@@ -78,13 +87,13 @@ by_sex
 #### 4.1.) ใช้ Bar Chart
 
 ```{r}
-p1 <- ggplot(data=character_live, aes(x = publisher, alive, y = n)) +
-        # map "alive" of beverage to aes "fill"" of the bar
-        geom_col(aes(fill = alive), position = position_fill()) +
-        # flip coordinate
-        coord_flip() +
-        # add labels
-        labs(x="", y="Characters", title="Comic Characters dead from each publisher")
+p1 <- ggplot(data=by_publisher, aes(x = publisher, y = n)) +
+      # map "alive" of beverage to aes "fill"" of the bar
+      geom_col(aes(fill = alive), position = position_fill()) +
+      # flip coordinate
+      coord_flip() +
+      # add labels
+      labs(x="", y="Characters", title="Comic characters status from each publisher (In percentage)")
 
 p1
 ```
@@ -93,15 +102,46 @@ p1
 
 ```{r}
 p2 <- ggplot(data=by_sex, aes(x = sex, y = n)) +
-        # map "alive" of beverage to aes "fill"" of the bar
-        geom_col(aes(fill = alive), position = position_fill()) +
-        # flip coordinate
-        coord_flip() +
-        # add labels
-        labs(x="", y="Characters", title="Comic Characters alive from each publisher by sex")
+      # map "alive" of beverage to aes "fill"" of the bar
+      geom_col(aes(fill = alive), position = position_fill()) +
+      # flip coordinate
+      coord_flip() +
+      # add labels
+      labs(x="", y="Characters", title="Comic characters status by character gender (In percentage)")
  
 p2
 ```
+
+```{r}
+p3 <- ggplot(data=by_align, aes(x = align, y = n)) +
+      # map "alive" of beverage to aes "fill"" of the bar
+      geom_col(aes(fill = alive), position = position_fill()) +
+      # flip coordinate
+      coord_flip() +
+      # add labels
+      labs(x="", y="Characters", title="Comic characters status by character alignment (In percentage)")
+
+p3
+```
+
 ## สรุปผล
 
-    `to_be_done`
+### 1.)
+จะสังเกตได้ว่า ทั้ง Marvel และ DC นั้นมีการเขียนให้ตัวละครเสียชีวิตในอัตราที่ใกล้เคียงกัน โดยอัตราการเสียชีวิตของตัวละครจาก Marvel อยู่ที่ 23.0% และตัวละครจาก DC อยู่ที่ 24.56%
+
+```{r}
+p1
+```
+
+### 2.)
+ต่อมาหากดูจากเพศของตัวละคร จะสังเกตได้ว่า อัตราการเสียชีวิตของตัวละครเพศชาย มีมากกว่าตัวละครเพศหญิงเล็กน้อย โดยตัวละครเพศหญิงมีอัตราการเสียชีวิตอยู่ที่ 19.9% และตัวละครเพศชายมีอัตราการเสียชีวิตที่ 25.21%
+
+```{r}
+p2
+```
+
+สุดท้ายหากดูจากฝ่ายของตัวละครก็จะพบว่า ตัวละครที่ไม่อยู่ฝั่งใดฝ่ายหนึ่งหรือฝ่ายดี มีอัตราการเสียชีวิตน้อยกว่าตัวละครฝ่ายร้ายระดับหนึ่ง โดยตัวละครที่ไม่อยู่ฝ่ายใดฝ่ายหนึ่งมีอัตราการเสียชีวิตอยู่ที่ 19.61% ตัวละครฝ่ายดีอยู่ที่ 20.26% และตัวละครฝ่ายร้ายอยู่ที่ 28.42%
+
+```{r}
+p3
+```
