@@ -1,16 +1,18 @@
 ---
 title: "Comic Characters 538"
 header-includes:
-  - \usepackage{xunicode} 
-  - \usepackage{xltxtra}
-  - \defaultfontfeatures{Scale=MatchLowercase} 
-  - \setmainfont[Scale=1.5]{Angsana New} 
-  - \XeTeXlinebreaklocale "th"
-  - \XeTeXlinebreakskip = 0pt plus 1pt 
-output: 
-   pdf_document: 
-     latex_engine: xelatex
+- \usepackage{xunicode}
+- \usepackage{xltxtra}
+- \defaultfontfeatures{Scale=MatchLowercase}
+- \setmainfont[Scale=1.5]{Angsana New}
+- \XeTeXlinebreaklocale "th"
+- \XeTeXlinebreakskip = 0pt plus 1pt
 date: "2019/04/12"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    latex_engine: xelatex
 ---
 
 ```{r setup, include=FALSE}
